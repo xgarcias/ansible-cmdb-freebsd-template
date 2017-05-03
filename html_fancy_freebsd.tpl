@@ -272,6 +272,33 @@ if collapsed == "1":
 
   % endif
 </%def>
+<%def name="host_jails(host)">
+  % if len(jsonxs(host, 'ansible_facts.ansible_local.jails', default={}).items()) != 0:
+    <h4 class="toggle-collapse ${collapsed_class}">Jails</h4>
+    <div class="collapsable ${collapsed_class}">
+    <table>
+    <tr>
+      <th>Name</th>
+      <th>JID</th>
+      <th>Path</th>
+      <th>OS Release</th>
+      <th>ipv4</th>
+      <th>ipv6</th>
+      % for jail in sorted(jsonxs(host, 'ansible_facts.ansible_local.jails', default={})):
+    </tr>
+      <td>${jail}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.jails.%s.jid' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.jails.%s.path' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.jails.%s.osrelease' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.jails.%s.ip4\.addr' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.jails.%s.ip6\.addr' % (jail), default="")}</td>
+    </tr>
+      % endfor
+    </table>
+    </div>
+
+  % endif
+</%def>
 <%def name="host_groups(host)">
   % if len(host.get('groups', [])) != 0:
     <h4 class="toggle-collapse ${collapsed_class}">Groups</h4>
@@ -690,6 +717,7 @@ if collapsed == "1":
           % else:
             <% host_general(host) %>
             <% host_zpool(host) %>
+            <% host_jails(host) %>
             <% host_groups(host) %>
             <% host_custvars(host) %>
             <% host_localfacts(host) %>
