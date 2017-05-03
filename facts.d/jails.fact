@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import json
+import shlex
+import re
+from subprocess import Popen, PIPE
+
+def load_jail_info(line):
+    config={}
+    for token in shlex.split(line):
+        ts=token.split('=')
+        if len(ts) == 2:
+            config[ts[0]]=ts[1]
+        else:
+            config[ts[0]]=None
+    return config
+
+command="jls -qn".split(" ")
+process = Popen(command, stdout=PIPE, stderr=PIPE)
+stdout, stderr = process.communicate()
+lines = stdout.strip().split('\n')
+jails={}
+for line in lines:
+    if line.strip() == '':
+        break
+    config=load_jail_info(line)
+    #we skip auditd jails
+    if not config['name'].isdigit():
+        jails[config['name']]=config
+print json.dumps(jails)

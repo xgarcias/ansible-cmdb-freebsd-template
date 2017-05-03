@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+
+import json
+import shlex
+import re
+import os
+import os.path
+
+
+ezjail_path="/usr/local/etc/ezjail"
+
+def load_ezjail_config(name):
+    config={}
+    f=open(os.path.join(ezjail_path, name), 'r')
+    data=f.readlines()
+    f.close()
+    for line in data:
+        content=line.strip("\n")
+        if re.match("^#",content)==None and len(content) > 0:
+            tokens= shlex.split(content)
+	    if tokens[0]== 'export':
+                ez_config=tokens.pop().split('=',1)
+                param=ez_config[0].replace("jail_%s_" % name,'')
+                config[param]=ez_config[1]
+    return config
+
+
+jsdata={}
+config_files= [f for f in os.listdir(ezjail_path) if os.path.isfile(os.path.join(ezjail_path, f))]
+
+for jail_name in config_files:
+    if re.match("^\w*$",jail_name) != None:
+        jsdata[jail_name]=load_ezjail_config(jail_name)
+
+print json.dumps(jsdata)
