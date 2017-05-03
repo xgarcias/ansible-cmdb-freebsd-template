@@ -299,6 +299,33 @@ if collapsed == "1":
 
   % endif
 </%def>
+<%def name="host_ezjail(host)">
+  % if len(jsonxs(host, 'ansible_facts.ansible_local.ezjail', default={}).items()) != 0:
+    <h4 class="toggle-collapse ${collapsed_class}">ezjail config</h4>
+    <div class="collapsable ${collapsed_class}">
+    <table>
+    <tr>
+      <th>Storage</th>
+      <th>FIB</th>
+      <th>IP</th>
+      <th>Hostname</th>
+      <th>Root Directory</th>
+      <th>Parameters</th>
+      % for jail in sorted(jsonxs(host, 'ansible_facts.ansible_local.ezjail', default={})):
+    </tr>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.ezjail.%s.imagetype' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.ezjail.%s.fib' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.ezjail.%s.ip' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.ezjail.%s.hostname' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.ezjail.%s.rootdir' % (jail), default="")}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.ezjail.%s.parameters' % (jail), default="")}</td>
+    </tr>
+      % endfor
+    </table>
+    </div>
+
+  % endif
+</%def>
 <%def name="host_groups(host)">
   % if len(host.get('groups', [])) != 0:
     <h4 class="toggle-collapse ${collapsed_class}">Groups</h4>
@@ -718,6 +745,7 @@ if collapsed == "1":
             <% host_general(host) %>
             <% host_zpool(host) %>
             <% host_jails(host) %>
+            <% host_ezjail(host) %>
             <% host_groups(host) %>
             <% host_custvars(host) %>
             <% host_localfacts(host) %>
