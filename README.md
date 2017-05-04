@@ -12,5 +12,5 @@ Installing
 
 Running
  * Refresh your Ansible cache: ansible all -m setup -a "fact_path=/usr/local/etc/ansible/facts.d" --tree cache
- * Generate the html page: ansible-cmdb -p collapsed=1 -t html_fancy_freebsd  -f ./cache/ > cmdb.html
+ * Generate the html page from your Ansible project: ansible-cmdb -p collapsed=1 -t html_fancy_freebsd  -f ./cache/ > cmdb.html
 
