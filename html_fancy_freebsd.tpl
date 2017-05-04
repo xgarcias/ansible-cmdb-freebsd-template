@@ -359,6 +359,7 @@ if collapsed == "1":
     </div>
   % endif
 </%def>
+<%doc>
 <%def name="host_localfacts(host)">
   % if len(jsonxs(host, 'ansible_facts.ansible_local', default={}).items()) != 0:
     <h4 class="toggle-collapse ${collapsed_class}">Host local facts</h4>
@@ -367,6 +368,7 @@ if collapsed == "1":
     </div>
   % endif
 </%def>
+</%doc>
 <%def name="host_factorfacts(host)">
   <%
   facter_facts = {}
@@ -748,7 +750,7 @@ if collapsed == "1":
             <% host_ezjail(host) %>
             <% host_groups(host) %>
             <% host_custvars(host) %>
-            <% host_localfacts(host) %>
+##          <% host_localfacts(host) %>
             <% host_factorfacts(host) %>
             <% host_customfacts(host) %>
             <% host_hardware(host) %>
