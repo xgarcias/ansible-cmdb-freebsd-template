@@ -303,12 +303,27 @@ if collapsed == "1":
     <tr>
       <th>Name</th>
     </tr>
-  % for pkg in sorted(jsonxs(host, 'ansible_facts.ansible_local.pkg_audit', default={})):
+  % for pkg in sorted(jsonxs(host, 'ansible_facts.ansible_local.pkg_audit', default=[])):
     <tr>
       <td>${pkg}</td>
     </tr>
   % endfor
     </table>
+  </div>
+  % endif
+</%def>
+<%def name="host_jailaudit(host)">
+  % if len(jsonxs(host, 'ansible_facts.ansible_local.pkgs_audit_jails', default={}).items()) != 0:
+  <h4 class="toggle-collapse ${collapsed_class}">Vulnerable packages in jails</h4>
+  <div class="collapsable ${collapsed_class}">
+  % for jail in sorted(jsonxs(host, 'ansible_facts.ansible_local.pkgs_audit_jails', default={})):
+  <h4>${jail}</h4>
+  <ul>
+  % for pkg in sorted(jsonxs(host, 'ansible_facts.ansible_local.pkgs_audit_jails.%s' % (jail), default=[])):
+    <li>${pkg}</li>
+  % endfor
+  </ul>
+  % endfor
   </div>
   % endif
 </%def>
@@ -788,6 +803,7 @@ if collapsed == "1":
             <% host_zpool(host) %>
             <% host_packages(host) %>
             <% host_audit(host) %>
+            <% host_jailaudit(host) %>
             <% host_jails(host) %>
             <% host_ezjail(host) %>
             <% host_groups(host) %>

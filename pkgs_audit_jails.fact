@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+import os
+import os.path
+import sys
+import json
+import subprocess
+import glob
+
+
+
+def list_jails_with_ports():
+    jails=[]
+    for path in glob.glob("/usr/jails/*/var/db/pkg"):
+        jails.append(path.split("/",4)[3])
+    return jails
+
+
+def vuln_packages(jail):
+    packages=[]
+    env=dict(os.environ)
+    env['PKG_DBDIR']='/usr/jails/%s/var/db/pkg' % jail
+    p=subprocess.Popen('pkg audit -q --file /var/db/pkg/vuln.xml',
+                            shell=True,
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            env=env
+                            )
+    stdout,stderr = p.communicate()
+    for line in stdout.split("\n"):
+        if len(line)>0:
+            packages.append(line)
+    return packages
+
+pkg_data={}
+if os.path.isfile('/var/db/pkg/vuln.xml'):
+
+    # load pkg info for every jail in the host
+    for jail in list_jails_with_ports():
+        vuln_pkgs=vuln_packages(jail)
+        if len(vuln_pkgs) > 0:
+            pkg_data[jail]=vuln_packages(jail)
+
+
+print json.dumps(pkg_data)
