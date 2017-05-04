@@ -291,6 +291,7 @@ if collapsed == "1":
       <td>${jsonxs(host, 'ansible_facts.ansible_local.packages.%s.comment' % (pkg), default={})}</td>
     </tr>
   % endfor
+    </table>
   </div>
   % endif
 </%def>
