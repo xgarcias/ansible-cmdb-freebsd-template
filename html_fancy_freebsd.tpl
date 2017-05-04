@@ -291,6 +291,24 @@ if collapsed == "1":
       <td>${jsonxs(host, 'ansible_facts.ansible_local.packages.%s.comment' % (pkg), default={})}</td>
     </tr>
   % endfor
+    </table>
+  </div>
+  % endif
+</%def>
+<%def name="host_audit(host)">
+  % if len(jsonxs(host, 'ansible_facts.ansible_local.pkg_audit', default=[])) != 0:
+  <h4 class="toggle-collapse ${collapsed_class}">Vulnerable packages</h4>
+  <div class="collapsable ${collapsed_class}">
+    <table>
+    <tr>
+      <th>Name</th>
+    </tr>
+  % for pkg in sorted(jsonxs(host, 'ansible_facts.ansible_local.pkg_audit', default={})):
+    <tr>
+      <td>${pkg}</td>
+    </tr>
+  % endfor
+    </table>
   </div>
   % endif
 </%def>
@@ -769,6 +787,7 @@ if collapsed == "1":
             <% host_general(host) %>
             <% host_zpool(host) %>
             <% host_packages(host) %>
+            <% host_audit(host) %>
             <% host_jails(host) %>
             <% host_ezjail(host) %>
             <% host_groups(host) %>
