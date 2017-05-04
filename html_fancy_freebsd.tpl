@@ -272,6 +272,28 @@ if collapsed == "1":
 
   % endif
 </%def>
+<%def name="host_packages(host)">
+  % if len(jsonxs(host, 'ansible_facts.ansible_local.packages', default={}).items()) != 0:
+  <h4 class="toggle-collapse ${collapsed_class}">Installed packages</h4>
+  <div class="collapsable ${collapsed_class}">
+    <table>
+    <tr>
+      <th>Name</th>
+      <th>Version</th>
+      <th>Origin</th>
+      <th>Comment</th>
+    </tr>
+  % for pkg in sorted(jsonxs(host, 'ansible_facts.ansible_local.packages', default={})):
+    <tr>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.packages.%s.name' % (pkg), default={})}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.packages.%s.version' % (pkg), default={})}</td>
+      <td>${pkg}</td>
+      <td>${jsonxs(host, 'ansible_facts.ansible_local.packages.%s.comment' % (pkg), default={})}</td>
+    </tr>
+  % endfor
+  </div>
+  % endif
+</%def>
 <%def name="host_jails(host)">
   % if len(jsonxs(host, 'ansible_facts.ansible_local.jails', default={}).items()) != 0:
     <h4 class="toggle-collapse ${collapsed_class}">Jails</h4>
@@ -359,6 +381,7 @@ if collapsed == "1":
     </div>
   % endif
 </%def>
+<%doc>
 <%def name="host_localfacts(host)">
   % if len(jsonxs(host, 'ansible_facts.ansible_local', default={}).items()) != 0:
     <h4 class="toggle-collapse ${collapsed_class}">Host local facts</h4>
@@ -367,6 +390,7 @@ if collapsed == "1":
     </div>
   % endif
 </%def>
+</%doc>
 <%def name="host_factorfacts(host)">
   <%
   facter_facts = {}
@@ -744,11 +768,12 @@ if collapsed == "1":
           % else:
             <% host_general(host) %>
             <% host_zpool(host) %>
+            <% host_packages(host) %>
             <% host_jails(host) %>
             <% host_ezjail(host) %>
             <% host_groups(host) %>
             <% host_custvars(host) %>
-            <% host_localfacts(host) %>
+##          <% host_localfacts(host) %>
             <% host_factorfacts(host) %>
             <% host_customfacts(host) %>
             <% host_hardware(host) %>
