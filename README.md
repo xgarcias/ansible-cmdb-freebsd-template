@@ -1,6 +1,15 @@
 # ansible-cmdb-freebsd-template
 html_fancy template to gather extra information from FreeBSD hosts
 
+Extra features:
+* Detailed information about the Zpools and its health
+* List of zfs volumes and their configuration
+* List of running jails
+* Ezjail configuration
+* Installed packages
+* Vulnerable packages
+* Vulnerable packaes in the jails
+
 Requeriments:
  * ansible-cmdb from https://github.com/fboender/ansible-cmdb
  * ezjail (the custom facts may crash and you will need to hack the code)
